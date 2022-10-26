@@ -28,7 +28,7 @@ def get_rot_mat(azi, alt):
 
 
 # Reading file
-with open("test.obj", "r") as f:
+with open("models/sphere.obj", "r") as f:
     file = f.read()
     n_verts = len(re.findall(r"^v ", file, flags=re.MULTILINE))
     n_faces = len(re.findall(r"^f ", file, flags=re.MULTILINE))
@@ -115,6 +115,9 @@ while True:
     # Draw objects
     # Clear display
     win.fill((255, 255, 255))
+    tri = pg.Surface((w, h))
+    tri.fill((255, 255, 255))
+    tri.set_colorkey((255, 255, 255))
     for i in faces:
         a, b, c = i  # 3 verts of triangle
         # If object is behind screen
@@ -122,14 +125,10 @@ while True:
             continue
 
         # Draw triangles
-        line = pg.Surface((w, h))
-        line.fill((255, 255, 255))
-        line.set_colorkey((255, 255, 255))
-        pg.draw.polygon(line, (0, 0, 0), (
+        pg.draw.polygon(tri, (0, 0, 0), (
             (projected[a - 1][0], projected[a - 1][1]),
             (projected[b - 1][0], projected[b - 1][1]),
             (projected[c - 1][0], projected[c - 1][1]),
         ), width=1)
-        win.blit(line, (0, 0))
-
+    win.blit(tri, (0, 0))
     pg.display.update()
