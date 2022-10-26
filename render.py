@@ -57,15 +57,17 @@ win = pg.display.set_mode((0, 0))
 pg.mouse.set_visible(False)
 pg.event.set_grab(True)
 w, h = pg.display.get_window_size()
+clock = pg.time.Clock()
 
 # Player coordinates
 x, y, z = 0, 0, 0
 azi, alt = 0, 0  # Player orientation angles
-speed = 0.1
+speed = 0.01
 
 proj = get_proj_mat(70*math.pi/180, w/h)
 
 while True:
+    dt = clock.tick(60)
     # Handle events
     for event in pg.event.get():
         # Handle mouse scroll
@@ -74,21 +76,21 @@ while True:
     # Handle key presses
     keys = pg.key.get_pressed()
     if keys[pg.K_d]:
-        x += speed * math.cos(azi)
-        z += speed * math.sin(azi)
+        x += dt * speed * math.cos(azi)
+        z += dt * speed * math.sin(azi)
     if keys[pg.K_a]:
-        x -= speed * math.cos(azi)
-        z -= speed * math.sin(azi)
+        x -= dt * speed * math.cos(azi)
+        z -= dt * speed * math.sin(azi)
     if keys[pg.K_w]:
-        x += speed * math.sin(azi)
-        z -= speed * math.cos(azi)
+        x += dt * speed * math.sin(azi)
+        z -= dt * speed * math.cos(azi)
     if keys[pg.K_s]:
-        x -= speed * math.sin(azi)
-        z += speed * math.cos(azi)
+        x -= dt * speed * math.sin(azi)
+        z += dt * speed * math.cos(azi)
     if keys[pg.K_SPACE]:
-        y += speed
+        y += dt * speed
     if keys[pg.K_LSHIFT]:
-        y -= speed
+        y -= dt * speed
 
     # Handle mouse move
     mouse_move = pg.mouse.get_rel()
