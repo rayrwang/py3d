@@ -1,11 +1,13 @@
 import math
 import re
+import sys
 
 import pygame as pg
 import numpy as np
 
 
 def get_proj_mat(fov, ar):
+    """Project world coordinates to screen"""
     mat = np.array([
         [-1 / math.tan(fov / 2), 0, 0],
         [0, ar / math.tan(fov / 2), 0]
@@ -14,6 +16,7 @@ def get_proj_mat(fov, ar):
 
 
 def get_rot_mat(azi, alt):
+    """Rotate world according to player camera orientation"""
     azi_rot = np.array([
         [math.cos(azi), 0, math.sin(azi)],
         [0, 1, 0],
@@ -28,7 +31,7 @@ def get_rot_mat(azi, alt):
 
 
 # Reading file
-with open("models/sphere.obj", "r") as f:
+with open(sys.argv[1], "r") as f:
     file = f.read()
     n_verts = len(re.findall(r"^v ", file, flags=re.MULTILINE))
     n_faces = len(re.findall(r"^f ", file, flags=re.MULTILINE))
@@ -46,7 +49,7 @@ with open("models/sphere.obj", "r") as f:
             vert = line.split(" ")
             verts[n_v] = np.array([float(x) for x in vert[1:]])
             n_v += 1
-        elif re.findall(r"f ", line):  # Line of vertex
+        elif re.findall(r"f ", line):  # Line of face
             face = re.findall(r" .*?/", line)
             faces[n_f] = np.array([int(x[1:-1]) for x in face[:]], dtype="int16")
             n_f += 1
@@ -59,10 +62,10 @@ pg.event.set_grab(True)
 w, h = pg.display.get_window_size()
 clock = pg.time.Clock()
 
-# Player coordinates
+# Init player coordinates
 x, y, z = 0, 0, 0
 azi, alt = 0, 0  # Player orientation angles
-speed = 0.01
+speed = 0.01  # Movement speed
 
 proj = get_proj_mat(70*math.pi/180, w/h)
 
@@ -115,13 +118,14 @@ while True:
     projected = projected*rescale + rescale  # Nx2 and 1x2
 
     # Draw objects
-    # Clear display
-    win.fill((255, 255, 255))
+    win.fill((255, 255, 255))  # Clear display
     tri = pg.Surface((w, h))
     tri.fill((255, 255, 255))
     tri.set_colorkey((255, 255, 255))
     for i in faces:
         a, b, c = i  # 3 verts of triangle
+
+        # TODO Drawing triangles with some vertices behind screen
         # If object is behind screen
         if verts_rot[a-1, 2] > -0.01 or verts_rot[b-1, 2] > -0.01 or verts_rot[c-1, 2] > -0.01:
             continue
