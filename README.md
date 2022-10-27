@@ -13,3 +13,8 @@ pip install pygame numpy
 cd py3d
 python render.py <path-to-.obj-file>
 ```
+
+### Controls
+`W` `A` `S` `D` strafe  
+`SPACE` `LSHIFT` up/down  
+`SCROLL` change movement speed  
