@@ -45,11 +45,11 @@ with open(sys.argv[1], "r") as f:
         line = f.readline()
         if len(line) == 0:
             break
-        if re.findall(r"v ", line):  # Line of vertex
+        if re.findall(r"^v ", line):  # Line of vertex
             vert = line.split(" ")
             verts[n_v] = np.array([float(x) for x in vert[1:]])
             n_v += 1
-        elif re.findall(r"f ", line):  # Line of face
+        elif re.findall(r"^f ", line):  # Line of face
             face = re.findall(r" .*?/", line)
             faces[n_f] = np.array([int(x[1:-1]) for x in face[:]], dtype="int16")
             n_f += 1
@@ -126,6 +126,7 @@ while True:
         a, b, c = i  # 3 verts of triangle
 
         # TODO Drawing triangles with some vertices behind screen
+        # TODO occlusion
         # If object is behind screen
         if verts_rot[a-1, 2] > -0.01 or verts_rot[b-1, 2] > -0.01 or verts_rot[c-1, 2] > -0.01:
             continue
